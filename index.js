@@ -8,6 +8,12 @@ app.use(helmet());
 app.use(express.json());
 
 
+const actionRouter = require('./routes/action');
+const projectRouter = require('./routes/project');
+
+app.use('/actions', actionRouter);
+app.use('/projects', projectRouter);
+
 
 
 

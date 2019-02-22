@@ -12,8 +12,8 @@ exports.up = function(knex, Promise) {
         .notNullable();
     tbl
         .boolean('completed')
-        .notNullable()
-        .defaultTo(false);
+        .defaultTo(false)
+        .notNullable();
   })
 };
 

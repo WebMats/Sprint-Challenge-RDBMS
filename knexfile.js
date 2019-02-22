@@ -8,6 +8,7 @@ module.exports = {
     client: 'sqlite3',
     connection: {
       filename: `${basePath}/data/lambda.sqlite3`
-    }
+    },
+    useNullAsDefault: true
   }
 };
