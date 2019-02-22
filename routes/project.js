@@ -9,7 +9,7 @@ router.post('', async (req, res, next) => {
         return res.status(404).json({errorMessage: "Please provide both a name and description field"});
     }
     try {
-        const completed = req.body.completed ? req.body.completed : false;
+        const completed = req.body.completed === true ? 1 : 0;
         const [id] = await db('projects').insert({name, description, completed});
         res.status(201).json({id})
     } catch (err) {
@@ -36,6 +36,38 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 
+router.put('/:id', async (req, res, next) => {
+    const { name, description } = req.body;
+    if (!name || !description) {
+        return res.status(404).json({errorMessage: "Please provide both a name and description field"});
+    }
+    try {
+        const completed = req.body.completed === true ? 1 : 0;
+        const result = await db('projects').where({id: req.params.id}).update({name , description, completed})
+        if (!result) {
+            res.status(404).json({errorMessage: "Could not update the project."})
+        } else {
+            res.status(201).json(result)
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({errorMessage: "Could not update the project."})
+    }
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const result = await db('projects').where({id: req.params.id}).del();
+        if (result < 1) {
+            res.status(404).json({errorMessage: "The project with that id could not be deleted"})
+          } else {
+            res.status(201).json(result)
+          }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({errorMessage: "Could not delete the project"})
+    }
+})
 
 
 
