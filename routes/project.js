@@ -20,10 +20,14 @@ router.post('', async (req, res, next) => {
 
 
 router.get('/:id', async (req, res, next) => {
+    const id = req.params.id
     try {
-        const project = await db('projects').where({id: req.params.id}).first();
-        if (!project) {
-            return res.status(404).json({errorMessage: `Could not find the project with an id of ${req.params.id}.`})
+        const fetchedProject = await db('projects').where({id}).first();
+        const actionsArray = await db('actions').where({project_id: id})
+        const transformedActions = actionsArray.map(action => ({...action, completed: action.completed === 1 ? true : false }))
+        const project = {...fetchedProject, completed: fetchedProject.completed === 1 ? true: false, actions: transformedActions}
+        if (!project.name) {
+            return res.status(404).json({errorMessage: `Could not find the project with an id of ${id}.`})
         }
         res.status(200).json(project)
     } catch (err) {
