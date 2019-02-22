@@ -23,6 +23,7 @@ router.get('/:id', async (req, res, next) => {
     const id = req.params.id
     try {
         const fetchedProject = await db('projects').where({id}).first();
+        console.log(fetchedProject)
         const actionsArray = await db('actions').where({project_id: id})
         const transformedActions = actionsArray.map(action => ({...action, completed: action.completed === 1 ? true : false }))
         const project = {...fetchedProject, completed: fetchedProject.completed === 1 ? true: false, actions: transformedActions}
