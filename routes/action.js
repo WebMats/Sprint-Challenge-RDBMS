@@ -19,12 +19,15 @@ router.post('', async (req, res, next) => {
 })
 
 router.get('/:id', async (req, res, next) => {
+    const id = req.params.id
     try {
-        const fetchedAction = await db('actions').where({id: req.params.id}).first();
+        const fetchedAction = await db('actions').where({id}).first();
         if (!fetchedAction) {
-            return res.status(404).json({errorMessage: `Could not find the action with an id of ${req.params.id}.`})
+            return res.status(404).json({errorMessage: `Could not find the action with an id of ${id}.`})
         }
-        const transformedAction = {...fetchedAction, completed: fetchedAction === 1 ? true : false}
+        const contexts = await db('action_contexts').where({action_id: id}).join('contexts', {'contexts.id':'action_contexts.context_id'})
+        const transFormedContexts = contexts.map(context => ({context: context.context}));
+        const transformedAction = {...fetchedAction, completed: fetchedAction === 1 ? true : false, contexts: transFormedContexts}
         res.status(200).json(transformedAction)
     } catch (err) {
         console.log(err)
